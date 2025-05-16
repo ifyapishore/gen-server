@@ -3,7 +3,7 @@ package com.example.demo;
 public class MaxSum {
 
     public static boolean boundaryFail(int[] arr, int maxSliceSize) {
-        return (arr == null || arr.length == 0 || maxSliceSize <= 0);
+        return arr == null || arr.length == 0 || maxSliceSize <= 0;
     }
 
     public static long maxSumOfRange_Primitive(int[] arr, int maxSliceSize) {
@@ -12,11 +12,18 @@ public class MaxSum {
         if (boundaryFail(a, k)) {
             return 0; // or throw an exception
         }
+        if(k >= arr.length) {
+            long sum = 0;
+            for (int i = 0; i < arr.length; i++) {
+                sum += arr[i];
+            }
+            return sum;
+        }
         long max = Integer.MIN_VALUE;
-        for(int start = 0; start < arr.length - k; start++) {
-            for(int end = start; end < start + k; end++) {
+        for (int start = 0; start <= arr.length - k; start++) {
+            for (int end = start + 1; end < start + k + 1; end++) {
                 int sum = 0;
-                for(int i = start; i <= end; i++) {
+                for (int i = start; i < end; i++) {
                     sum += arr[i];
                 }
                 max = Math.max(max, sum);
@@ -91,7 +98,7 @@ public class MaxSum {
             }
         }
 
-    return max;
+        return max;
     }
 
 }
