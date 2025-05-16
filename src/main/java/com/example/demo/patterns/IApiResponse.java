@@ -1,16 +1,14 @@
 package com.example.demo.patterns;
 
-import com.example.demo.apimodel.StatSummary;
-
 @lombok.Data
 @lombok.NoArgsConstructor
-public class ApiResponse<T> {
+public class IApiResponse<T> {
     public String idempotencyKey;
     public ApiResponseStatus status;
     public T d;
 
-    public static <T> ApiResponse<T> of(T entity) {
-        ApiResponse<T> response = new ApiResponse<>();
+    public static <T> IApiResponse<T> of(T entity) {
+        IApiResponse<T> response = new IApiResponse<>();
         //
         response.idempotencyKey = "nope";
         response.status = ApiResponseStatus.ok;
@@ -18,8 +16,8 @@ public class ApiResponse<T> {
         return response;
     }
 
-    public static <T> ApiResponse<T> of(Exception e) {
-        ApiResponse<T> response = new ApiResponse<>();
+    public static <T> IApiResponse<T> of(Exception e) {
+        IApiResponse<T> response = new IApiResponse<>();
         response.status = ApiResponseStatus.fail;
         return response;
     }

@@ -1,7 +1,9 @@
 package com.example.demo.mongo;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public interface TaskRepository extends MongoRepository<Task, Id> {
      * @param id the ID of the task
      * @return an Optional containing the task if found, or empty if not found
      */
-    Optional<Task> findById(Id id);
+    Optional<Task> findById(@NonNull Id id);
 
     /**
      * Find all tasks with a specific status.
