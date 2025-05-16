@@ -12,6 +12,7 @@ public class MaxSumJUnit {
         assertEquals(expected, MaxSum.maxSumOfRange_Primitive(arr, K), "k=" + K + " arr=" + Arrays.toString(arr));
         assertEquals(expected, MaxSum.maxSumOfRange_Optimized(arr, K), "k=" + K + " arr=" + Arrays.toString(arr));
         assertEquals(expected, MaxSum.maxSumOfRange_Optimized2(arr, K), "k=" + K + " arr=" + Arrays.toString(arr));
+        assertEquals(expected, MaxSum.maxSumOfRange_Optimized3(arr, K), "k=" + K + " arr=" + Arrays.toString(arr));
     }
     @Test
     public void test() {
