@@ -12,7 +12,7 @@ public class MaxSum {
         if (boundaryFail(a, k)) {
             return 0; // or throw an exception
         }
-        if(k >= arr.length) {
+        if (k >= arr.length) {
             long sum = 0;
             for (int i = 0; i < arr.length; i++) {
                 sum += arr[i];
