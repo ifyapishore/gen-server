@@ -7,16 +7,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class MaxSumJUnit {
 
     private void srun(int expected, int K, int... arr) {
-        long etalong = MaxSum.maxSumOfRange_Primitive(arr, K);
-        long res = MaxSum.maxSumOfRange(arr, K);
-        assertEquals(expected, etalong);
-//        assertEquals(expected, res);
+        assertEquals(expected, MaxSum.maxSumOfRange_Primitive(arr, K));
+        assertEquals(expected, MaxSum.maxSumOfRange_Optimized(arr, K));
+        assertEquals(expected, MaxSum.maxSumOfRange_Optimized2(arr, K));
+        assertEquals(expected, MaxSum.maxSumOfRange_Optimized3(arr, K));
     }
     @Test
     public void test() {
-        // current
-        this.srun(2, 4, new int[]{-2, 2});
-        this.srun(2, 4, new int[]{2});
+        // danger zone
+        this.srun(2, 1, new int[]{-2, 2, -123, -123});
+        this.srun(0, 0, new int[]{-2, 2});
+        for(int k=1; k<10; k++) {
+            this.srun(2, k, new int[]{-2, 2, -123, -123});
+        }
+        for(int k=1; k<10; k++) {
+            this.srun(2, k, new int[]{2});
+        }
+        for(int k=-100; k<=0; k++) {
+            this.srun(0, k, new int[]{2});
+        }
         this.srun(2, 2, new int[]{-1, 1, -2, 2});
 
         // preconditions check
@@ -40,6 +49,10 @@ public class MaxSumJUnit {
         this.srun(2, 2, new int[]{-1, 1, -2, 2});
         this.srun(2, 3, new int[]{-1, 1, -2, 2});
 
-        System.out.println("\uD83D\uDC9A".repeat(20) + "\n All tests passed.");
+        // text positives
+        this.srun(5, 3, new int[]{1, 1, 2, 2});
+        this.srun(14, 4, new int[]{1, 1, 2, 2, 3, 4, 5});
+        this.srun(9, 3, new int[]{1, 1, 2, 2, 3, 4});
+        System.out.println("\uD83D\uDC9A".repeat(20) + "\n Passed.");
     }
 }

@@ -26,73 +26,136 @@ public class MaxSum {
         return max;
     }
 
-    /**
-     * This method calculates the maximum sum of a contiguous subarray of a given size.
-     *
-     * @param arr          The input array of integers. Values can be negative.
-     * @param maxSliceSize The maximum size of the subarray.
-     * @return The maximum sum of the contiguous subarray.
-     */
-    public static int maxSumOfRange(int[] arr, int maxSliceSize) {
+    public static long maxSumOfRange_Optimized(int[] arr, int maxSliceSize) {
         final int k = maxSliceSize;
         final int[] a = arr;
         if (boundaryFail(a, k)) {
             return 0; // or throw an exception
         }
+        // determnte the positive only case and min max values
+        int sv_min = Integer.MAX_VALUE;
+        int sv_max = Integer.MIN_VALUE;
+        boolean has_negatives = true;
+        for (int i = 0; i < a.length; i++) {
+            var v = a[i];
+            if (v < sv_min) sv_min = v;
+            if (v > sv_max) sv_max = v;
+            has_negatives |= v < 0;
+        }
 
-        if (k == 1) {
-            int max = Integer.MIN_VALUE;
-            // TODO: Check SIMD optimization of your JVM (20+)
-            for (int i = 0; i < arr.length; i++) {
-                final int v = arr[i];
-//                max = (v > max) ? v : max;
-                max = Math.max(max, v);
+        if (has_negatives) {
+            long max = Integer.MIN_VALUE;
+            for (int start = 0; start <= a.length - 1; start++) {
+                for (int end = start + 1; end < start + k + 1; end++) {
+                    int sum = 0;
+                    int maxEnd = Math.min(end, a.length);
+                    for (int i = start; i < maxEnd; i++) {
+                        sum += a[i];
+                    }
+                    max = Math.max(max, sum);
+                }
+            }
+            return max;
+        } else {
+            // all positive, we can assume that max window size will give the max
+            long max = Integer.MIN_VALUE;
+            for (int start = 0; start <= a.length - 1; start++) {
+                int sum = 0;
+                int maxEnd = Math.min(start + k, a.length);
+                for (int i = start; i < maxEnd; i++) {
+                    sum += a[i];
+                }
+                max = Math.max(max, sum);
             }
             return max;
         }
-        // SPECIAL CASE: compact data (maxSliceSize & arr.length < than COU cores)
-        // TODO: Check the JVM insights before using this code by the factory method
-
-        // STEP 1: Detect min values of the array - c*(N)
-        // TODO: Check the compiler capabilities to optimize this code using SIMD instructions.
-        int maxArrayCellValue = Integer.MAX_VALUE;
-        boolean hasNegatives = false;
-
-        for (int i = 0; i < arr.length; i++) {
-            var cellValue = arr[i];
-            hasNegatives |= cellValue < 0;
-            //CATCH: Math.min can't be transponded to other lang without using a library
-            maxArrayCellValue = Math.min(maxArrayCellValue, cellValue);
-        }
-
-        return hasNegatives ?
-                maxSumOfRangeOfSemiPositives(arr, maxSliceSize) :
-                maxSumOfRangeOfNegatives(arr, maxSliceSize);
     }
 
-    public static int maxSumOfRangeOfNegatives(int[] arr, int maxSliceSize) {
-        // we must respect the presence of negative numbers in the arrays.
-        // 1) Use complicated math to calculate the max value of the array
-        // 2) Rely on number boundary overlow and use bitwise masks
-        return 0;
-    }
-
-    public static int maxSumOfRangeOfSemiPositives(int[] arr, int maxSliceSize) {
-        // All array items are positive or zero.
-        // Sum of every subarray of size maxSliceSize is bigger ot equal to (maxSliceSize-1)
-        int max = 0;// all numbers are positive
-        int sum = 0;
-        for (int i = 0; i < arr.length; i++) {
-            sum += arr[i];
-            if (i >= maxSliceSize) {
-                sum -= arr[i - maxSliceSize];
-            }
-            if (sum > max) {
-                max = sum;
-            }
+    public static long maxSumOfRange_Optimized2(int[] arr, int maxSliceSize) {
+        final int k = maxSliceSize;
+        final int[] a = arr;
+        if (boundaryFail(a, k)) {
+            return 0; // or throw an exception
+        }
+        // determnte the positive only case and min max values
+        int sv_min = Integer.MAX_VALUE;
+        int sv_max = Integer.MIN_VALUE;
+        boolean has_negatives = true;
+        for (int i = 0; i < a.length; i++) {
+            var v = a[i];
+            if (v < sv_min) sv_min = v;
+            if (v > sv_max) sv_max = v;
+            has_negatives |= v < 0;
         }
 
-        return max;
+        if (has_negatives) {
+            long max = Integer.MIN_VALUE;
+            for (int start = 0; start <= a.length - 1; start++) {
+                for (int end = start + 1; end < start + k + 1; end++) {
+                    int sum = 0;
+                    int maxEnd = Math.min(end, a.length);
+                    for (int i = start; i < maxEnd; i++) {
+                        sum += a[i];
+                    }
+                    max = Math.max(max, sum);
+                }
+            }
+            return max;
+        } else {
+            // all positive, we can assume that max window size will give the max sum
+            // apply running window
+
+            // first window sum
+            long max = 0;
+            for (int i = 0; i < Math.min(k, a.length); i++) {
+                max += a[i];
+            }
+
+            // running window, subtract tail and add head.
+            // until the last shrinking window
+            int lastIndex = a.length - k;
+            for (int start = 1; start <= lastIndex; start++) {
+                int tail = a[start - 1];
+                int head = a[start + k];
+                long val = max - tail + head;
+                max = val > max ? val : max;
+            }
+            // last window
+            int lastWindowSum = 0;
+            for (int i = lastIndex + 1; i < a.length; i++) {
+                lastWindowSum += a[i];
+            }
+            return lastWindowSum > max ? lastWindowSum : max;
+        }
+    }
+
+    public static long maxSumOfRange_Optimized3(int[] arr, int maxSliceSize) {
+        final int k = maxSliceSize;
+        final int[] a = arr;
+        if (boundaryFail(a, k)) {
+            return 0; // or throw an exception
+        }
+        // convert int to long + upper, this way all values will be positive
+        // apply running window
+
+        long UPPER = (long)Integer.MAX_VALUE + 2;
+
+        // first window sum
+        long max = 0;
+        for (int i = 0; i < Math.min(k, a.length); i++) {
+            max += (long)a[i] + UPPER;
+        }
+
+        // running window, subtract tail and add head.
+        // until the last shrinking window
+        int lastIndex = a.length - k - 1;
+        for (int start = 1; start <= lastIndex; start++) {
+            long tail = (long)a[start - 1] + UPPER;
+            long head = (long)a[start + k] + UPPER;
+            long val = max - tail + head;
+            max = val > max ? val : max;
+        }
+        return max - UPPER;
     }
 
 }
