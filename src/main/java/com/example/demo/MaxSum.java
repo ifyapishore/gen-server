@@ -42,6 +42,10 @@ public class MaxSum {
             if (v > sv_max) sv_max = v;
             has_negatives |= v < 0;
         }
+        if(k == 1) {
+            // if k == 1, we can just return the max value
+            return sv_max;
+        }
 
         if (has_negatives) {
             long max = Integer.MIN_VALUE;
@@ -128,34 +132,4 @@ public class MaxSum {
             return lastWindowSum > max ? lastWindowSum : max;
         }
     }
-
-    public static long maxSumOfRange_Optimized3(int[] arr, int maxSliceSize) {
-        final int k = maxSliceSize;
-        final int[] a = arr;
-        if (boundaryFail(a, k)) {
-            return 0; // or throw an exception
-        }
-        // convert int to long + upper, this way all values will be positive
-        // apply running window
-
-        long UPPER = (long)Integer.MAX_VALUE + 2;
-
-        // first window sum
-        long max = 0;
-        for (int i = 0; i < Math.min(k, a.length); i++) {
-            max += (long)a[i] + UPPER;
-        }
-
-        // running window, subtract tail and add head.
-        // until the last shrinking window
-        int lastIndex = a.length - k - 1;
-        for (int start = 1; start <= lastIndex; start++) {
-            long tail = (long)a[start - 1] + UPPER;
-            long head = (long)a[start + k] + UPPER;
-            long val = max - tail + head;
-            max = val > max ? val : max;
-        }
-        return max - UPPER;
-    }
-
 }
