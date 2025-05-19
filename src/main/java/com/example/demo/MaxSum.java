@@ -33,7 +33,7 @@ public class MaxSum {
         if (boundaryFail(a, k)) {
             return 0; // or throw an exception
         }
-        // determnte the positive only case and min max values
+        // detect the positive only case and min max values
         int sv_min = Integer.MAX_VALUE;
         int sv_max = Integer.MIN_VALUE;
         boolean has_negatives = true;
@@ -130,6 +130,37 @@ public class MaxSum {
             }
             return max;
         }
+    }
+
+    public static int maxSumOfRange_Optimized3(int[] arr, int k) {
+        if (arr == null || arr.length == 0 || k <= 0) {
+            return 0;
+        }
+
+        int n = arr.length;
+        k = Math.min(k, n);
+
+        int maxSum = Integer.MIN_VALUE;
+
+        for (int len = 1; len <= k; len++) {
+            int windowSum = 0;
+
+            // sum of first `len` elements
+            int i = 0;
+            for (; i < len; i++) {
+                windowSum += arr[i];
+            }
+
+            maxSum = Math.max(maxSum, windowSum);
+
+            // slide the window
+            for (; i < n; i++) {
+                windowSum += arr[i] - arr[i - len];
+                maxSum = Math.max(maxSum, windowSum);
+            }
+        }
+
+        return maxSum;
     }
 
     public static long maxSumOfRange_Optimized4(int[] arr, int maxSliceSize) {
