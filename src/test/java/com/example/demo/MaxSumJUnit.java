@@ -23,7 +23,7 @@ public class MaxSumJUnit {
     public void testPerformance() {
         int[] arr = new int[1000];
         for (int j = 0; j < arr.length; j++) {
-            arr[j] = (int) (Math.random() * 1000);
+            arr[j] = 2000 + (int) (Math.random() * 1000);
         }
 
         testPerformanceLoop(new PerfRun() {
@@ -54,8 +54,8 @@ public class MaxSumJUnit {
 
     private void testPerformanceLoop(PerfRun func, int[] arr, String name) {
         long ts = - System.currentTimeMillis();
-        for(int i=0; i < 10_000; i++) {
-            func.run(arr, 10);
+        for(int i=0; i < 100; i++) {
+            func.run(arr, arr.length);
         }
         ts += System.currentTimeMillis();
 
